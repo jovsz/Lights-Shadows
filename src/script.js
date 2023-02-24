@@ -34,11 +34,38 @@ spotLight.castShadow = true
 //Optimaze shadows
 directionalLight.shadow.width = 1024*2
 directionalLight.shadow.height = 1024*2
-pointLight.shadow.width = 1024*2
-pointLight.shadow.height = 1024*2
+directionalLight.shadow.camera.near = 1
+directionalLight.shadow.camera.far = 6
+directionalLight.shadow.camera.top = 2
+directionalLight.shadow.camera.right = 2
+directionalLight.shadow.camera.bottom = -2
+directionalLight.shadow.camera.left = -2
+pointLight.shadow.mapSize.width = 1024*2
+pointLight.shadow.mapSize.height = 1024*2
+pointLight.shadow.camera.near = 1
+pointLight.shadow.camera.far = 6
+pointLight.shadow.camera.top = 2
+pointLight.shadow.camera.right = 2
+pointLight.shadow.camera.bottom = -2
+pointLight.shadow.camera.left = -2
 spotLight.shadow.width = 1024*2
 spotLight.shadow.height = 1024*2
+spotLight.shadow.camera.near = 1
+spotLight.shadow.camera.far = 6
+spotLight.shadow.camera.top = 2
+spotLight.shadow.camera.right = 2
+spotLight.shadow.camera.bottom = -2
+spotLight.shadow.camera.left = -2
 
+
+//limit camera range shadow
+const directionalLightCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
+directionalLightCameraHelper.visible = false
+const pointLightCameraHelper = new THREE.CameraHelper(pointLight.shadow.camera)
+pointLightCameraHelper.visible = false
+
+scene.add(directionalLightCameraHelper)
+scene.add(pointLightCameraHelper)
 //Helpers
 const hemisphereLightHelper = new THREE.HemisphereLightHelper(hemisphereLight, 0.2)
 hemisphereLightHelper.visible = false
@@ -58,7 +85,13 @@ scene.add(rectAreaLightHelper)
 
 //GUI 
 //
-const helpersFolder = gui.addFolder('Helpers', close)
+const shadowCameraFolder = gui.addFolder('Shadow Camera Helpers')
+shadowCameraFolder.add(directionalLightCameraHelper, 'visible').name('direction light')
+shadowCameraFolder.add(pointLightCameraHelper, 'visible').name('Point light')
+
+
+
+const helpersFolder = gui.addFolder('Helpers')
 helpersFolder.close()
 helpersFolder.add(hemisphereLightHelper,'visible').name('Hemisphere')
 helpersFolder.add(directionalLightHelper,'visible').name('Directional Light')
@@ -245,7 +278,12 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 //activate shadow
 renderer.shadowMap.enabled = true
-
+//types of algorithms can be applied to shadow maps
+//* THREE.BasicShadowMap - very performant but lousy quality
+//* THREE.PCFShadowMap - less performant but smoother edges
+//* THREE.PCFSoftShadowMap - Less performant but event softer edges
+//* THREE.VSMShadowMap - less performant, more constrains, can have unexpected results
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
 /**
  * Animate
  */
